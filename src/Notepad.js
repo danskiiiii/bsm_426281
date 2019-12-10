@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CryptoJS from 'crypto-js';
-import KeyStore from 'react-native-secure-key-store';
+import KeyStore, { ACCESSIBLE } from 'react-native-secure-key-store';
 import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native';
 
 export const NotepadScreen = ({ navigation }) => {
   const [noteText, setNoteText] = useState('');
@@ -11,7 +10,6 @@ export const NotepadScreen = ({ navigation }) => {
   useEffect(() => {
     KeyStore.get('secret').then(
       secret => {
-        console.log(secret, 'in notepad');
         KeyStore.get('note').then(
           note => {
             setSecretText(String(secret));
@@ -44,18 +42,16 @@ export const NotepadScreen = ({ navigation }) => {
         multiline
         onChangeText={text => {
           setNoteText(text);
+
           const ciphertext = CryptoJS.AES.encrypt(text, secretText);
-          KeyStore.set('note', String(ciphertext), null).then(res =>
-            console.log(res),
-          );
+          KeyStore.set(
+            'note',
+            String(ciphertext),
+
+            { accessible: ACCESSIBLE.WHEN_UNLOCKED },
+          ).then(res => console.log(res));
         }}
         numberOfLines={10}
-        style={{ marginBottom: 100 }}
-      />
-      <Button
-        title={'Change password'}
-        color="blueviolet"
-        onPress={() => navigation.navigate('ChangePassword')}
       />
     </>
   );

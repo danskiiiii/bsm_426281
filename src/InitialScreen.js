@@ -1,6 +1,6 @@
 import React from 'react';
 import CryptoJS from 'crypto-js';
-import KeyStore from 'react-native-secure-key-store';
+import KeyStore, { ACCESSIBLE } from 'react-native-secure-key-store';
 
 import { ActivityIndicator } from 'react-native';
 
@@ -8,7 +8,7 @@ export const InitialScreen = ({ navigation }) => {
   KeyStore.get('secret').then(
     res => {
       console.log(res);
-      navigation.navigate('Login');
+      navigation.navigate('Finger');
     },
     err => {
       console.log('no secret set - initial app run', err);
@@ -18,10 +18,10 @@ export const InitialScreen = ({ navigation }) => {
         String(
           CryptoJS.lib.WordArray.random(Math.floor(Math.random() * 25 + 15)),
         ),
-        null,
+        { accessible: ACCESSIBLE.WHEN_UNLOCKED },
       ).then(res => {
         console.log(res);
-        navigation.navigate('ChangePassword', { initial: true });
+        navigation.navigate('Finger');
       });
     },
   );
